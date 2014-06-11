@@ -4,9 +4,64 @@
 # Import the required Python modules
 import os
 import sys
+import getopt
+import getpass
 import ConfigParser
 import sqlite3
 from twitter import *
+
+def usage(error_string=None):
+    prog_name = sys.argv[0]
+    if error_string:
+        print 'ERROR: {0}'.format(error_string)
+        print
+    print 'Usage:'
+    print
+    print '{0}'.format(prog_name)
+    print '{0} [options]'.format(prog_name)
+    print
+    print '  -d | --dir <string>    Directory to write the output file in'
+    print '  -f | --file            Outputs the results to file'
+    print '  -h | --help            Display usage'
+    print
+    print 'To display the twitter stats on stdout, use:'
+    print
+    print '  {0}'.format(prog_name)
+    print
+    print 'To write the results to a file, use this:'
+    print
+    print '  {0} --file'.format(prog_name)
+    print
+    print 'The file will be named YYYY-MM-DD.txt in the current directory'
+    print
+    print 'To save the file in a different directory, use this:'
+    print
+    print '  {0} -f -d /path/to/some/other/dir/'.format(prog_name)
+    print
+
+# Check the command line
+try:
+    opts, args = getopt.getopt(sys.argv[1:], 'd:fh',
+                               ['dir=', 'file', 'help'])
+
+except getopt.GetoptError as err:
+    # There was something wrong with the command line options
+    usage(err)
+    sys.exit(2)
+
+# Parse any command line options and arguments
+output_dir = None
+output_file = None
+for o, a in opts:
+    if o in ("-h", "--help"):
+        usage()
+        sys.exit()
+    elif o in ("-d", "--dir"):
+        output_dir = a
+    elif o in ("-f", "--cile"):
+        output_file = True
+    else:
+        assert False, "Unknown command line option"
 
 # Get configuration file
 base_path = os.path.expanduser('~/.twitter-stats')
@@ -65,6 +120,14 @@ c.execute(sql)
 sql_results = c.fetchall()
 today = sql_results[0][0]
 
+# If requested, write the followers report to a file
+if output_file:
+    if output_dir:
+        file_path = os.path.join(output_dir, str(today) + '.txt')
+    else:
+        file_path = str(today) + '.txt'
+    report_file = open(file_path, 'w+')
+
 # Insert the new and changed follower counts into the database
 for profile in result_list:
     screen_name = profile[u'screen_name']
@@ -94,21 +157,46 @@ for profile in result_list:
     c.execute(sql)
     conn.commit()
 
-    # Output the Twitter user and follower counts to stdout
-    print '@{0}'.format(screen_name)
-    if previous_count > 0:
-        print '{0}: {1}'.format(previous_date, previous_count)
-    if followers_change > 0:
-        print '{0}: {1} (+{2})'.format(today,
-                                       current_count,
-                                       followers_change)
-    elif followers_change < 0:
-        print '{0}: {1} ({2})'.format(today,
-                                      current_count,
-                                      followers_change)
+    # If requested, write the followers report to a file
+    if output_file:
+        report_file.write('@{0}\n'.format(screen_name))
+        if previous_count > 0:
+            report_file.write('{0}: {1}\n'.format(previous_date,
+                                                previous_count))
+        if followers_change > 0:
+            report_file.write('{0}: {1} (+{2})\n'.format(today,
+                                                       current_count,
+                                                       followers_change))
+        elif followers_change < 0:
+            report_file.write('{0}: {1} ({2})\n'.format(today,
+                                                      current_count,
+                                                      followers_change))
+        else:
+            report_file.write('{0}: {1}\n'.format(today, current_count))
+        report_file.write('\n')
+
     else:
-        print '{0}: {1}'.format(today, current_count)
-    print
+        # Output the Twitter user and follower counts to stdout
+        print '@{0}'.format(screen_name)
+        if previous_count > 0:
+            print '{0}: {1}'.format(previous_date, previous_count)
+        if followers_change > 0:
+            print '{0}: {1} (+{2})'.format(today,
+                                           current_count,
+                                           followers_change)
+        elif followers_change < 0:
+            print '{0}: {1} ({2})'.format(today,
+                                          current_count,
+                                          followers_change)
+        else:
+            print '{0}: {1}'.format(today, current_count)
+        print
+
+
+# Close the output file if we're using one
+if output_file:
+    report_file.close()
+
 
 # Close the database connection
 c.close()
