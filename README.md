@@ -4,22 +4,23 @@
 
 2. Install the Python module dependencies using pip:
 
-    $ pip install sqlite3
-    $ pip install twitter
+        $ pip install sqlite3
+        $ pip install twitter
 
 3. Create the directory for holding the database and config info
 
-    $ mkdir -p ~/.twitter-stats/db
+        $ mkdir -p ~/.twitter-stats/db
 
 4. Copy and edit the config file
 
-You'll need to update the Twitter authentication fields with
-your own info. Info for creating them is on dev.twitter.com.
+        $ cp config ~/.twitter-stats/
+        $ vi ~/.twitter-stats/config
 
-    $ cp config ~/.twitter-stats/
-    $ vi ~/.twitter-stats/config
+The Twitter authentication info in the config file needs to be
+updated with your own details.  Info for creating your own
+developer account details are on https://dev.twitter.com.
 
-Setup complete.
+Setup is now complete.
 
 You can either run the script adhoc, or set it to run in cron.
 
