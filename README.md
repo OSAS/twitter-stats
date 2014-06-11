@@ -2,10 +2,11 @@
 
 1. Ensure you have Python's package manager "pip" installed
 
+    On Fedora and CentOS, it's in the "python-pip" package.
+
 2. Install the Python module dependencies using pip
 
-        $ pip install sqlite3
-        $ pip install twitter
+        $ sudo pip install twitter
 
 3. Create the directory for holding the database and config info
 
@@ -16,9 +17,9 @@
         $ cp config ~/.twitter-stats/
         $ vi ~/.twitter-stats/config
 
-The Twitter authentication info in the config file needs to be
-updated with your own details.  Info for creating your own
-developer account details are on https://dev.twitter.com.
+    The Twitter authentication info in the config file needs to be
+    updated with your own details.  Info for creating your own
+    developer account details are on https://apps.twitter.com.
 
 Setup is now complete.
 
