@@ -1,0 +1,8 @@
+[twitter-auth]
+consumer_key=CONFIDENTIAL
+consumer_secret=CONFIDENTIAL
+token=CONFIDENTIAL
+token_secret=CONFIDENTIAL
+
+[twitter]
+user_list=redhatopen,gluster,ovirt,rdocommunity,ceph,projectatomic,openshift,fedora,manageiq,centos,centosproject
