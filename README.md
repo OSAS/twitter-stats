@@ -1,8 +1,8 @@
 ## Setup ##
 
-1. Ensure you have Python's package manager "pip" installed.
+1. Ensure you have Python's package manager "pip" installed
 
-2. Install the Python module dependencies using pip:
+2. Install the Python module dependencies using pip
 
         $ pip install sqlite3
         $ pip install twitter
